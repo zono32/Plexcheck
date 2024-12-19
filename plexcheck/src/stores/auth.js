@@ -1,31 +1,54 @@
 import { defineStore } from "pinia";
 
-const token = ref();
-const tokenData = ref();
-const tokenDuration = ref();
+const token = ref(null); // Token reactivo en memoria
+const tokenDuration = ref(null); // Tiempo de expiración del token
+const userData = ref(null); // Información del usuario autenticado
 
-//10 horas = 36000
-
-const setTokens = (tokenData, encryptedData = '', timeTokenExpire =300) => {
+const setTokens = (tokenData, switchState = false, timeTokenExpire = 1200) => {
+  const duration = switchState ? 36000 : timeTokenExpire;
   token.value = tokenData;
-  //   tokenData.value = encryptedData;
-  tokenDuration.value = Date.now() + timeTokenExpire * 1000;
+  tokenDuration.value = Date.now() + duration * 1000;
   setTimeout(() => {
     clearTokens();
-  }, timeTokenExpire*1000);
+  }, duration * 1000);
+};
+
+const refreshToken = async () => {
+  try {
+    const response = await someRefreshTokenService(token.value);
+    if (response.success) {
+      setTokens(response.data.token, 300); // Renovar el token
+      return true;
+    }
+  } catch (error) {
+    console.error("Error al refrescar el token:", error);
+  }
+  clearTokens(); 
+  return false;
 };
 
 const clearTokens = () => {
   token.value = null;
-  tokenData.value = null;
   tokenDuration.value = null;
+  userData.value = null;
 };
-export const useAuthStore = defineStore(
-  "auth",
-  () => ({
-    setTokens,
-    tokenData,
-    token,
-  }),
-  { persist: {} }//el persist es por que si no lo tengo cuando hago un cambio en el codigo me va a la pagina de login
-);
+
+const isTokenValid = () => {
+  if (!token.value || !tokenDuration.value) return false;
+  return Date.now() < tokenDuration.value;
+};
+
+const setUser = (user) => {
+  userData.value = user;
+};
+
+export const useAuthStore = defineStore("auth", () => ({
+  token,
+  tokenDuration,
+  userData,
+  setTokens,
+  clearTokens,
+  isTokenValid,
+  setUser,
+  refreshToken,
+}));

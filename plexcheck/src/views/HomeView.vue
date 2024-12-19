@@ -3,45 +3,23 @@ import CryptoJS from "crypto-js";
 import { useAuthStore } from "@/stores/auth";
 import { useUserStore } from "@/stores/user";
 import useService from "@/hooks/useService";
-import { useDateFormat, useNow } from "@vueuse/core";
-import { computed, ref } from "vue";
+import { useNow } from "@vueuse/core";
+import useTimetable from "@/composables/useTimetable";
+
+const {
+  normalizeDate,
+  formatDate,
+  getTimeInSeconds,
+  formatTime,
+  formatTimeSeconds,
+  today,
+  date,
+  hour,
+  now,
+} = useTimetable();
 
 const auth = useAuthStore();
 const user = useUserStore();
-
-const now = useNow();
-const today = useDateFormat(now, "dddd");
-const date = useDateFormat(now, "DD-MM-YYYY");
-const hour = useDateFormat(now, "HH:mm:ss");
-
-const normalizeDate = (fecha) => {
-  if (!fecha) return null;
-  const partes = fecha.split("-" || "/");
-  return new Date(partes[2], partes[1] - 1, partes[0]);
-};
-
-const formatDate = (dateString) => {
-  const date = new Date(dateString);
-  const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const year = date.getFullYear();
-  return `${day}-${month}-${year}`;
-};
-
-const getTimeInSeconds = (date) => {
-  const d = new Date(date);
-  return d.getHours() * 3600 + d.getMinutes() * 60 + d.getSeconds();
-};
-
-//computada
-const formatTime = (seconds) => {
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  return `${String(hours).padStart(2, "0")}h ${String(minutes).padStart(
-    2,
-    "0"
-  )}min`;
-};
 
 const {
   signIn,
@@ -150,7 +128,7 @@ watch(
   }
 );
 
-const todayNormalized = normalizeDate(date.value);
+const todayNormalized = normalizeDate(date);
 
 const scheduleFound = computed(() => {
   if (!timetableData.value || !Array.isArray(timetableData.value.timetable))
@@ -239,16 +217,6 @@ watch(
     }
   }
 );
-
-const formatTimeSeconds = (seconds) => {
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  const secs = seconds % 60;
-  return `${String(hours).padStart(2, "0")}h ${String(minutes).padStart(
-    2,
-    "0"
-  )}min ${String(secs).padStart(2, "0")}seg`;
-};
 
 const ahoraSeg = computed(() => getTimeInSeconds(useNow().value));
 

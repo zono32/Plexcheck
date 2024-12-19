@@ -2,11 +2,17 @@
 import useService from "@/hooks/useService";
 import { useAuthStore } from "@/stores/auth";
 import { useUserStore } from "@/stores/user";
-import { useDateFormat, useNow } from "@vueuse/core";
+import useTimetable from "@/composables/useTimetable";
 
-const now = useNow();
-const day = useDateFormat(now, "DD-MM-YYYY");
-const year = useDateFormat(now, "YYYY");
+const {
+  normalizeDate,
+  formatDate,
+  weekDay,
+  dayOfWeek,
+  date,
+  year,
+} = useTimetable();
+
 const {
   isTimetableSuccess,
   getTimetable,
@@ -21,36 +27,6 @@ const {
 const auth = useAuthStore();
 const user = useUserStore();
 
-const formatDate = (dateString) => {
-  const date = new Date(dateString);
-  const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const year = date.getFullYear();
-  return `${day}-${month}-${year}`;
-};
-
-const normalizeDate = (fecha) => {
-  if (!fecha) return null;
-  const partes = fecha.split("-" || "/");
-  return new Date(partes[2], partes[1] - 1, partes[0]);
-};
-
-const weekDay = computed(() => {
-  const dayOfWeek = new Date().getDay();
-  const times = currentTimetableData.value?.times;
-  return times?.find((time) => dayOfWeek == time.week_day);
-});
-
-const dayOfWeek = [
-  "Domingo",
-  "Lunes",
-  "Martes",
-  "Miércoles",
-  "Jueves",
-  "Viernes",
-  "Sábado",
-];
-
 const workingDay = computed(
   () =>
     ` Hoy es ${dayOfWeek[weekDay.value?.week_day]}, Hora de entrada: ${
@@ -58,9 +34,9 @@ const workingDay = computed(
     }, Hora de salida: ${weekDay.value?.hour_out}`
 );
 
-// console.log(day.value)
- const fechaPrueba = '15-08-2024';
-const todayNormalized = normalizeDate(fechaPrueba);
+//console.log(day.value)
+//const fechaPrueba = '15-08-2024';
+const todayNormalized = normalizeDate(date);
 
 const scheduleFound = computed(() => {
   if (!timetableData.value || !Array.isArray(timetableData.value.timetable)) {
@@ -103,13 +79,13 @@ const dataTables = ref([]);
 onMounted(async () => {
   for (let i = 0; i < idsTimeTable.value.length; i++) {
     const id = idsTimeTable.value[i] || 0;
-    console.log("id", id);
+    //console.log("id", id);
     await getCurrentTimetable(user.companyId, id, auth.token);
     dataTables.value.push(currentTimetableData.value);
   }
 });
 
-console.log(dataTables.value);
+//console.log(dataTables.value);
 
 const dataTable = ref([]);
 dataTable.value = timetableData.value?.timetable;

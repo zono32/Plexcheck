@@ -8,7 +8,8 @@ const router = useRouter();
 const { mobile } = useDisplay();
 
 const logout = () => {
-  auth.token = null;
+  const auth = useAuthStore();
+  auth.clearTokens();
   router.push("/login");
 };
 </script>

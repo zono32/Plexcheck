@@ -1,5 +1,6 @@
 <script setup>
 import CryptoJS from "crypto-js";
+import { useUserStore } from "@/stores/user";
 import { useAuthStore } from "@/stores/auth";
 import useService from "@/hooks/useService";
 
@@ -15,6 +16,8 @@ const encryptedLogin = (name, pass) =>
 const userData = ref({ name: "", pass: "" });
 const switchState = ref(true);
 
+const { setTokens } = useAuthStore();
+const { setUser } = useUserStore();
 const router = useRouter();
 const { authExecute, authData, isAuthSuccess } = useService();
 
@@ -23,12 +26,10 @@ const encryptedData = computed(() =>
 );
 
 watch(isAuthSuccess, () => {
-  const auth = useAuthStore();
-  auth.setTokens(authData.value.data.token, switchState.value ? 36000 : 1200); 
-  auth.setUser(authData.value.data);
-  router.push("/"); 
+  router.push("/");
+  setTokens(authData.value.data.token);
+  setUser(authData.value.data, switchState.value && encryptedData.value);
 });
-
 </script>
 
 <template>

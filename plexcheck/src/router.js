@@ -15,17 +15,22 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const auth = useAuthStore();
-  const isAuthenticated = auth.token !== null && auth.token !== undefined && auth.token !== ''; 
 
-  if (!isAuthenticated && to.name !== 'login') {
-    next({ name: 'login' });
-  } else if (isAuthenticated && to.name === 'login') {
-    next({ name: 'home' });
+  if (!auth.isTokenValid() && to.name !== "login") {
+    const refreshed = await auth.refreshToken();
+    if (!refreshed) {
+      next({ name: "login" }); 
+    } else {
+      next(); 
+    }
+  } else if (auth.isTokenValid() && to.name === "login") {
+    next({ name: "home" });
   } else {
-    next(); 
+    next();
   }
 });
+
 
 export default router;
