@@ -13,9 +13,11 @@ const {
   formatTime,
   formatTimeSeconds,
   today,
+  numberDay,
   date,
   hour,
   now,
+  month,
 } = useTimetable();
 
 const auth = useAuthStore();
@@ -109,7 +111,7 @@ const lastCheck = computed(() => {
 
 const showboton = computed(() => {
   const checks = checkData.value?.data?.checks || [];
-  if (checks.length === 0) return true; 
+  if (checks.length === 0) return true;
   const activeCheck = checks.find((check) => check.checkin && !check.checkout);
   if (activeCheck) {
     return false;
@@ -296,7 +298,7 @@ getHoliday(user.companyId, user.localityId, auth.token);
 const nextHoliday = computed(() => {
   const today = new Date();
 
-  if (!Array.isArray(holidayData.value))  return null;  
+  if (!Array.isArray(holidayData.value)) return null;
 
   const upcomingHolidays = holidayData.value.filter((holiday) => {
     const holidayDate = new Date(holiday.begins);
@@ -305,16 +307,17 @@ const nextHoliday = computed(() => {
   upcomingHolidays.sort((a, b) => new Date(a.begins) - new Date(b.begins));
   return upcomingHolidays.length > 0 ? upcomingHolidays[0] : null;
 });
-
 </script>
 
 <template>
   <div class="content_body">
     <div class="content_itens">
       <div class="wellcome">Tu Jornada</div>
-      <div class="today">
-        Hoy es {{ today }} {{ date }} y son las {{ hour }}
+      <div class="content_date">
+        <div class="today">{{ today }} {{ numberDay }} de {{ month }}.</div>
+        <div class="hour">{{ hour }}</div>
       </div>
+
       <div class="weader">Tiempo</div>
     </div>
 
@@ -397,7 +400,10 @@ const nextHoliday = computed(() => {
         <div class="holiday">
           <div v-if="nextHoliday">
             <div>Próximo festivo:</div>
-            <p>{{ nextHoliday.name }}: el día {{formatDate(nextHoliday.begins)  }}</p>
+            <p>
+              {{ nextHoliday.name }}: el día
+              {{ formatDate(nextHoliday.begins) }}
+            </p>
           </div>
           <div v-else>
             <p>No hay festivos próximos.</p>
@@ -414,6 +420,21 @@ const nextHoliday = computed(() => {
   color: #003053;
   padding: 20px;
 }
+.content_date {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+
+}
+
+.today {
+  font-size: 2em;
+}
+
+.hour {
+  font-size: 2em;
+}
+
 .content_itens {
   width: 95%;
   padding: 10px;

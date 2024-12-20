@@ -338,7 +338,7 @@ dataTable.value = timetableData.value?.timetable;
 }
 
 /* Media Queries */
-@media (max-width: 768px) {
+@media (max-width: 1070px) {
   .container {
     margin: 0em;
     padding: 0.5em;
@@ -364,7 +364,7 @@ dataTable.value = timetableData.value?.timetable;
   }
   .day-item {
     font-size: 0.8em;
-    width: calc(50% - 1em);
+    width: calc(30% - 1em);
   }
 
   .vacation-summary{
@@ -382,7 +382,7 @@ dataTable.value = timetableData.value?.timetable;
 }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 580px) {
   .title {
     font-size: 1.5em;
   }
@@ -394,6 +394,11 @@ dataTable.value = timetableData.value?.timetable;
   .working-day {
     font-size: 1em;
     margin-bottom: 1.5em;
+  }
+
+  .day-item {
+    font-size: 0.8em;
+    width: calc(50% - 1em);
   }
 
   .table-item {

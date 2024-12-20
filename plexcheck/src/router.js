@@ -15,22 +15,16 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach(async (to, from, next) => {
+router.beforeEach((to, from, next) => {
   const auth = useAuthStore();
 
   if (!auth.isTokenValid() && to.name !== "login") {
-    const refreshed = await auth.refreshToken();
-    if (!refreshed) {
-      next({ name: "login" }); 
-    } else {
-      next(); 
-    }
+    next({ name: "login" }); 
   } else if (auth.isTokenValid() && to.name === "login") {
-    next({ name: "home" });
+    next({ name: "home" }); 
   } else {
-    next();
+    next(); 
   }
 });
-
 
 export default router;

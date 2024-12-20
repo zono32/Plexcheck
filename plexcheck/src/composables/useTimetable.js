@@ -54,10 +54,12 @@ export default function useTimetable() {
 
   const now = useNow();
   const today = useDateFormat(now, "dddd");
+  const month = useDateFormat(now, "MMM");
+  const numberDay = useDateFormat(now, "DD");
   const date = useDateFormat(now, "DD-MM-YYYY");
   const hour = useDateFormat(now, "HH:mm:ss");
   const year = useDateFormat(now, "YYYY");
 
   return {
-    formatDate, normalizeDate, getTimeInSeconds, formatTime, formatTimeSeconds, today, date, hour, year, now, weekDay, dayOfWeek,};
+    formatDate, normalizeDate, getTimeInSeconds, formatTime, formatTimeSeconds, today, numberDay, date, hour, year, now, month, weekDay, dayOfWeek,};
 }

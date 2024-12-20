@@ -1,30 +1,19 @@
 import { defineStore } from "pinia";
 
-const token = ref(null); // Token reactivo en memoria
-const tokenDuration = ref(null); // Tiempo de expiración del token
-const userData = ref(null); // Información del usuario autenticado
+const token = ref();
+const tokenDuration = ref();
+const userData = ref();
+
+const initializeToken = () => {
+};
+
+initializeToken();
 
 const setTokens = (tokenData, switchState = false, timeTokenExpire = 1200) => {
   const duration = switchState ? 36000 : timeTokenExpire;
   token.value = tokenData;
   tokenDuration.value = Date.now() + duration * 1000;
-  setTimeout(() => {
-    clearTokens();
-  }, duration * 1000);
-};
 
-const refreshToken = async () => {
-  try {
-    const response = await someRefreshTokenService(token.value);
-    if (response.success) {
-      setTokens(response.data.token, 300); // Renovar el token
-      return true;
-    }
-  } catch (error) {
-    console.error("Error al refrescar el token:", error);
-  }
-  clearTokens(); 
-  return false;
 };
 
 const clearTokens = () => {
@@ -42,6 +31,8 @@ const setUser = (user) => {
   userData.value = user;
 };
 
+//falta hacer el refreshtoken
+
 export const useAuthStore = defineStore("auth", () => ({
   token,
   tokenDuration,
@@ -50,5 +41,4 @@ export const useAuthStore = defineStore("auth", () => ({
   clearTokens,
   isTokenValid,
   setUser,
-  refreshToken,
-}));
+}),{persist: true}); // sin el persist al hacer algun cambio en el codigo me devuelve a la pagina de login y pierdo los datos de la sesion

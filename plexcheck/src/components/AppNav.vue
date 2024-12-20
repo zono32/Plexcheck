@@ -8,7 +8,6 @@ const router = useRouter();
 const { mobile } = useDisplay();
 
 const logout = () => {
-  const auth = useAuthStore();
   auth.clearTokens();
   router.push("/login");
 };
