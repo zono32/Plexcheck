@@ -181,8 +181,8 @@ const todaySchedule = computed(() => {
 });
 
 const totalBreakSeconds = computed(() => {
-  if (checkData.value && checkData.value.data) {
-    const checks = checkData.value?.data?.checks || [];
+  const checks = checkData.value?.data?.checks || [];
+  if (checkData.value && checkData.value.data && checks.length > 1) {  
     let totalBreak = 0;
     let breack = 0;
 
@@ -194,6 +194,7 @@ const totalBreakSeconds = computed(() => {
     }
     return totalBreak;
   }
+  return 0;
 });
 
 const diffHoursInSeconds = computed(() => {
@@ -307,6 +308,7 @@ const nextHoliday = computed(() => {
   upcomingHolidays.sort((a, b) => new Date(a.begins) - new Date(b.begins));
   return upcomingHolidays.length > 0 ? upcomingHolidays[0] : null;
 });
+
 </script>
 
 <template>
@@ -314,28 +316,37 @@ const nextHoliday = computed(() => {
     <div class="content_itens">
       <div class="wellcome">Tu Jornada</div>
       <div class="content_date">
-        <div class="today">{{ today }} {{ numberDay }} de {{ month }}.</div>
-        <div class="hour">{{ hour }}</div>
+        <div class="today">Hoy es: {{ today }} {{ numberDay }} de {{ month }}.</div>
+        <div class="hour">Hora: {{ hour }}</div>
       </div>
 
-      <div class="weader">Tiempo</div>
+      <!-- <div class="weader">Tiempo</div> -->
     </div>
 
     <div class="content_itens">
-      <div>control de horas</div>
+      <div class="title-section" >Control de horas:</div>
       <div v-if="dataTable && dataTable.description">
         <div class="active_hours" v-for="item in todaySchedule" :key="item.id">
           Horario activo {{ dataTable.description }}
           <div class="estimated_time">({{ item.working_time }} horas)</div>
-          <div class="hours_in_out">
+          <!-- <div class="hours_in_out">
             <div class="hour_in">Hora de entrada: {{ item.hour_in }}</div>
             <div class="hour_out">Hora de salida: {{ item.hour_out }}</div>
-          </div>
+          </div> -->
         </div>
       </div>
 
       <div class="estimated_exit_hour">
         Hora estimada de salida: {{ formatTime(exitHour) }}
+      </div>
+
+      
+      
+      <div class="content_diffHours">
+        <div class="acumulated_time">
+          Llevas: {{ formatTimeSeconds(temporizador) }}
+        </div>
+        <div class="remaining_time">Restan: {{ remainingTime }}</div>
       </div>
 
       <div class="content_check_buton">
@@ -366,6 +377,7 @@ const nextHoliday = computed(() => {
         />
         <div v-if="issignInLoading">Procesando tu solicitud...</div>
       </div>
+
       <div class="realcheck_in_out">
         <div class="realcheck_in">
           Primera entrada del día:
@@ -376,16 +388,13 @@ const nextHoliday = computed(() => {
           {{ lastCheckOut ? formatTime(lastCheckOut) : "No registrada" }}
         </div>
       </div>
-      <div class="content_diffHours">
-        <div class="acumulated_time">
-          Llevas: {{ formatTimeSeconds(temporizador) }}
-        </div>
-        <div class="remaining_time">Te quedan: {{ remainingTime }}</div>
-      </div>
+
     </div>
 
+    
+
     <div class="content_itens">
-      Próximos eventos:
+      <div class="title-section">Próximos eventos:</div>
       <div class="content_hollidays">
         <div class="hollidays">
           <div v-if="upcomingVacation.length > 0">
@@ -416,102 +425,110 @@ const nextHoliday = computed(() => {
 
 <style scoped>
 .content_body {
-  background-color: rgb(245, 252, 250);
+  background: linear-gradient(135deg, #e3f2fd, #f1f8e9);
   color: #003053;
-  padding: 20px;
+  padding: 25px;
+  font-size: 1.5em;
 }
+
 .content_date {
   display: flex;
   justify-content: space-around;
+  margin-bottom: 10px;
+}
+
+.title-section {
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-shadow: 5px 5px 20px rgb(120, 119, 119);
   margin-bottom: 20px;
-
 }
 
-.today {
-  font-size: 2em;
-}
-
-.hour {
-  font-size: 2em;
+.today, .hour {
+  font-size: 1.2em;
 }
 
 .content_itens {
-  width: 95%;
-  padding: 10px;
+  width: 100%;
+  padding: 30px;
   margin: auto;
   background-color: white;
   border-radius: 5px;
   box-shadow: 0px 5px 15px #ddd;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 .wellcome {
   text-align: center;
-  font-size: 1.5rem;
+  font-weight:bold ;
+  font-size: 1.8rem;
   text-shadow: 5px 5px 20px rgb(120, 119, 119);
 }
-.active_hours {
+ .active_hours {
   text-align: center;
-}
+  margin-bottom: 20px;
+}/*
 .hours_in_out {
   display: flex;
   height: 100px;
 }
 
-.hour_in {
+.hour_in, .hour_out {
   width: 150px;
   margin: auto;
-}
-
-.hour_out {
-  width: 150px;
-  margin: auto;
-}
+} */
 .estimated_time {
   text-align: center;
 }
+
 .realcheck_in_out {
   display: flex;
-  margin-top: 50px;
+  margin-bottom: 30px;
 }
-.realcheck_in {
+
+.realcheck_in, .realcheck_out {
   margin: auto;
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  
 }
-.realcheck_out {
-  margin: auto;
-}
+
 .estimated_exit_hour {
   text-align: center;
-  font-size: 2rem;
+  font-size: 3rem;
   text-shadow: 5px 5px 15px #003252;
+  margin-bottom: 50px;
 }
 .content_diffHours {
   margin-top: 20px;
   display: flex;
 }
-.acumulated_time {
-  background: linear-gradient(90deg, #024f7e, rgb(245, 243, 244) 75%);
+
+.acumulated_time, .remaining_time {
+  width: 45%;
+  text-align: center;
+  font-size: 2rem;
+  text-shadow: 5px 5px 15px #003252;
   color: aqua;
   background-attachment: fixed;
-  padding: 20px;
+  padding: 10px;
   margin: auto;
   border-radius: 25px;
   box-shadow: 0px 5px 15px #ddd;
-  margin-bottom: 50px;
+  margin-bottom: 40px;
+}
+
+.acumulated_time {
+  background: linear-gradient(90deg, #024f7e, rgb(245, 243, 244) 150%); 
 }
 .remaining_time {
-  background: linear-gradient(90deg, rgb(245, 243, 244) 25%, #024f7e);
-  color: aqua;
-  background-attachment: fixed;
-  padding: 20px;
-  margin: auto;
-  border-radius: 25px;
-  box-shadow: 0px 5px 15px #ddd;
-  margin-bottom: 50px;
+  background: linear-gradient(90deg, rgb(245, 243, 244) -50%, #024f7e);
 }
 
 .content_check_buton {
-  margin-top: 30px;
-  margin-bottom: 50px;
+  margin-top: 10px;
+  margin-bottom: 30px;
   width: 100%;
   text-align: center;
 }
@@ -532,5 +549,131 @@ const nextHoliday = computed(() => {
 }
 .close_sesion_buton {
   text-align: center;
+}
+
+
+@media (max-width: 768px) {
+.content_body {
+  background: linear-gradient(135deg, #e3f2fd, #f1f8e9);
+  color: #003053;
+  padding: 5px;
+}
+
+.content_date {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.title-section {
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-shadow: 5px 5px 20px rgb(120, 119, 119);
+  margin-bottom: 20px;
+}
+
+.today, .hour {
+  font-size: 1.2em;
+}
+
+.content_itens {
+  width: 100%;
+  padding: 10px;
+  margin: auto;
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0px 5px 15px #ddd;
+  margin-bottom: 20px;
+}
+.wellcome {
+  text-align: center;
+  font-size: 1.5rem;
+  text-shadow: 5px 5px 20px rgb(120, 119, 119);
+}
+.active_hours {
+  text-align: center;
+}
+.hours_in_out {
+  display: flex;
+  height: 100px;
+}
+
+.hour_in, .hour_out {
+  width: 150px;
+  margin: auto;
+}
+.estimated_time {
+  text-align: center;
+}
+
+.realcheck_in_out {
+  display: flex;
+  margin-bottom: 30px;
+}
+
+.realcheck_in, .realcheck_out {
+  margin: auto;
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  
+}
+
+.estimated_exit_hour {
+  text-align: center;
+  font-size: 2rem;
+  text-shadow: 5px 5px 15px #003252;
+}
+.content_diffHours {
+  margin-top: 20px;
+  display: flex;
+}
+
+.acumulated_time, .remaining_time {
+  width: 45%;
+  text-align: center;
+  font-size: 0.8rem;
+  text-shadow: 5px 5px 15px #003252;
+  color: aqua;
+  background-attachment: fixed;
+  padding: 10px;
+  margin: auto;
+  border-radius: 25px;
+  box-shadow: 0px 5px 15px #ddd;
+  margin-bottom: 10px;
+}
+
+.acumulated_time {
+  background: linear-gradient(90deg, #024f7e, rgb(245, 243, 244) 150%); 
+}
+.remaining_time {
+  background: linear-gradient(90deg, rgb(245, 243, 244) -50%, #024f7e);
+}
+
+.content_check_buton {
+  margin-top: 10px;
+  margin-bottom: 30px;
+  width: 100%;
+  text-align: center;
+}
+
+.hollidays {
+  text-align: center;
+}
+.holiday {
+  text-align: center;
+}
+.content_hollidays {
+  padding: 10px;
+  margin: auto;
+  border-radius: 50px;
+  background-color: rgb(241, 246, 255);
+  width: 70%;
+  margin-bottom: 20px;
+}
+.close_sesion_buton {
+  text-align: center;
+}
 }
 </style>
