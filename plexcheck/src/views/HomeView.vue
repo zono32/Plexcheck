@@ -374,6 +374,7 @@ const nextHoliday = computed(() => {
           "
           color="#003252"
           rounded="xl"
+
         />
         <div v-if="issignInLoading">Procesando tu solicitud...</div>
       </div>
@@ -424,6 +425,7 @@ const nextHoliday = computed(() => {
 </template>
 
 <style scoped>
+
 .content_body {
   background: linear-gradient(135deg, #e3f2fd, #f1f8e9);
   color: #003053;
@@ -449,12 +451,13 @@ const nextHoliday = computed(() => {
 }
 
 .content_itens {
-  width: 100%;
+  width: 90%;
   padding: 30px;
   margin: auto;
   background-color: white;
   border-radius: 5px;
   box-shadow: 0px 5px 15px #ddd;
+  border-left: 5px solid #003356;
   margin-bottom: 20px;
 }
 .wellcome {
@@ -510,11 +513,11 @@ const nextHoliday = computed(() => {
   text-align: center;
   font-size: 2rem;
   text-shadow: 5px 5px 15px #003252;
-  color: aqua;
+  color: rgb(255, 225, 0);
   background-attachment: fixed;
   padding: 10px;
   margin: auto;
-  border-radius: 25px;
+  border-radius: 5px;
   box-shadow: 0px 5px 15px #ddd;
   margin-bottom: 40px;
 }
@@ -573,17 +576,13 @@ const nextHoliday = computed(() => {
 }
 
 .today, .hour {
-  font-size: 1.2em;
+  font-size: 0.7em;
 }
 
 .content_itens {
   width: 100%;
   padding: 10px;
-  margin: auto;
-  background-color: white;
-  border-radius: 5px;
-  box-shadow: 0px 5px 15px #ddd;
-  margin-bottom: 20px;
+  border-left:none;
 }
 .wellcome {
   text-align: center;
@@ -592,6 +591,7 @@ const nextHoliday = computed(() => {
 }
 .active_hours {
   text-align: center;
+  font-size: 0.6em;
 }
 .hours_in_out {
   display: flex;
@@ -613,6 +613,7 @@ const nextHoliday = computed(() => {
 
 .realcheck_in, .realcheck_out {
   margin: auto;
+  font-size: 0.6em;
   background-color: #f9f9f9;
   padding: 15px;
   border-radius: 10px;
@@ -666,10 +667,11 @@ const nextHoliday = computed(() => {
 }
 .content_hollidays {
   padding: 10px;
+  font-size: 0.6em;
   margin: auto;
-  border-radius: 50px;
+  border-radius: 10px;
   background-color: rgb(241, 246, 255);
-  width: 70%;
+  width: 90%;
   margin-bottom: 20px;
 }
 .close_sesion_buton {
